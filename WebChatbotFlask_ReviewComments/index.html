@@ -1,0 +1,128 @@
+<html>
+
+<!-- This is our CSS. You can read more about CSS here: https://blog.hubspot.com/website/css-tutorial -->
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+    :root {
+        --accent-color: #a876aa;
+        --background-color: #eeeeee;
+    }
+    body {
+        font-family: "Montserrat", sans-serif;
+        background-color: var(--background-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        background-color: #ffffff;
+        border-radius: 30px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+        height: 800px;
+        width: 600px;
+        max-height: 90%;
+    }
+    .header {
+        display: flex;
+        align-items: center;
+        margin: 20px;
+        color: var(--accent-color);
+    }
+    .header .avatar {
+        background-color: var(--accent-color);
+        align-self: center;
+        padding: 5px;
+        width: 50px;
+        border-radius: 50%;
+    }
+    .header h3 {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+    .chat {
+        background-color: #fff;
+        height: 100%;
+        overflow: auto;
+        padding: 10px;
+    }
+    .message {
+        font-size: 16px;
+        line-height: 25px;
+        width: fit-content;
+        max-width: 450px;
+        margin: 20px 10px;
+        padding: 20px;
+        border-radius: 30px;
+    }
+    .message.review {
+        background-color: var(--accent-color);
+        color: #fff;
+        border-top-left-radius: 0px;
+        padding-left: 30px;
+    }
+    .message.text {
+        background-color: #eee;
+        border-top-right-radius: 0px;
+        margin-left: auto;
+        padding-right: 30px;
+    }
+    input[type="text"] {
+        background-color: #eee;
+        color: var(--accent-color);
+        font-family: inherit;
+        border: 0;
+        border-radius: 50px;
+        padding: 14px 40px;
+        margin: 20px;
+        font-size: 16px;
+        cursor: pointer;
+        outline: none;
+    }
+</style>
+
+<!-- This is our HTML content -->
+<body>
+    <div class="container">
+    <div class="header"> 
+        <img src="https://cdn-icons-png.flaticon.com/512/2233/2233922.png" alt="" class="avatar">
+        <h3>Chatbot for Reviewing IMDB Comments</h3>
+    </div>
+    <div id="chat" class="chat"> </div>
+    <input type="text" id="inputText" placeholder="Please enter a review">
+    </div>
+</body>
+
+<!-- This is our javascript, we use this to manipulate the HTML content -->
+<script>
+    const chat = document.getElementById("chat");  // Find the element with id = chat 
+    const reviewBtn = document.getElementById("reviewBtn"); // Find the element with id = reviewBtn 
+    const inputText = document.getElementById('inputText'); // Find the element with id = inputText 
+    inputText.addEventListener('keypress', async (event) => {   
+        if (event.key === 'Enter') {  // Run this action when user type something into inputText 
+            const inputValue = inputText.value;  // We get the text value typed by the user 
+            const data = 'http://localhost:5000/predict?text=' + encodeURIComponent(inputText.value) // And send the user text to our backend
+            result = await fetch(data).then(response => response.text()) // Let's wait for backend to return a response. The result will be 'The review is postive' or ' The review is negative'
+
+            // Now we will update what the user has typed, and the result from backend, and add it to the HTML body so the user can see both their text and review result.
+            const message = document.createElement("div");   
+            const review = document.createElement("div");
+            message.classList.add("message", "text");
+            review.classList.add("message", "review");
+            review.innerHTML = result;
+            message.innerHTML = inputText.value;
+            chat.appendChild(message);
+            chat.appendChild(review);
+
+	    // Auto-scroll to the bottom of the chat div
+            chat.scrollTop = chat.scrollHeight;
+
+            // Clear the input field after sending the message
+            inputText.value = '';
+        }
+    });
+</script>
+</html>

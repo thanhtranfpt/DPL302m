@@ -1,0 +1,4 @@
+pickle-mixin
+flask
+flask-cors
+tensorflow
